@@ -1,5 +1,5 @@
-import { getLocalStorage, setLocalStorage, normalizeProduct } from "./utils.mjs";
-import { updateCart } from "./cart.js"; // Importamos la función para actualizar el carrito
+// src/js/ProductDetails.mjs
+import { getLocalStorage, setLocalStorage, normalizeProduct, updateCart } from "./utils.mjs";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -9,47 +9,66 @@ export default class ProductDetails {
   }
 
   async init() {
-    // Obtener los detalles del producto
-    this.product = await this.dataSource.findProductById(this.productId);
-    // Renderizar los detalles
-    this.renderProductDetails();
-    // Agregar event listener al botón
-    this.addToCartButton();
+    try {
+      this.product = await this.dataSource.findProductById(this.productId);
+      console.log("✅ Producto cargado en detalles:", this.product);
+
+      if (!this.product || !this.product.Id) {
+        console.error("❌ No se pudo cargar el producto con ID:", this.productId);
+        return;
+      }
+
+      this.renderProductDetails();
+      this.addToCartButton();
+
+      console.log("🛒 Carrito actual al cargar la página:", getLocalStorage("so-cart") || []);
+    } catch (err) {
+      console.error("❌ Error inicializando ProductDetails:", err);
+    }
   }
 
   addToCartButton() {
     const addButton = document.getElementById("add-to-cart");
     if (addButton) {
       addButton.addEventListener("click", () => {
+        console.log("👉 Click en Add to Cart, producto actual:", this.product);
         this.addProductToCart();
         this.showAddedToCartFeedback();
       });
+    } else {
+      console.error("❌ No se encontró el botón Add to Cart en el DOM");
     }
   }
 
   addProductToCart() {
-    // Obtener el carrito actual
-    const cartItems = getLocalStorage("so-cart") || [];
+    let cartItems = getLocalStorage("so-cart") || [];
+    console.log("🔎 Antes de agregar:", cartItems);
 
-    // Normalizar el producto actual
-    const normalized = normalizeProduct(this.product);
-
-    // Verificar si el producto ya está en el carrito
-    const existingItemIndex = cartItems.findIndex(item => item.Id === normalized.Id);
-
-    if (existingItemIndex >= 0) {
-      // Si ya existe, incrementar la cantidad
-      cartItems[existingItemIndex].quantity = (cartItems[existingItemIndex].quantity || 1) + 1;
-    } else {
-      // Si no existe, agregarlo con cantidad 1
-      cartItems.push(normalized);
+    cartItems = cartItems.map(item => normalizeProduct(item)).filter(Boolean);
+    const product = normalizeProduct(this.product);
+    if (!product) {
+      console.error("❌ No se pudo normalizar el producto:", this.product);
+      return;
     }
 
-    // Guardar en localStorage
-    setLocalStorage("so-cart", cartItems);
+    console.log("📦 Producto normalizado:", product);
 
-    // Actualizar el contador del carrito
+    const existingItemIndex = cartItems.findIndex(item => item.Id === product.Id);
+
+    if (existingItemIndex >= 0) {
+      cartItems[existingItemIndex].quantity =
+        (cartItems[existingItemIndex].quantity || 1) + 1;
+      console.log(`🔁 Producto existente, nueva cantidad: ${cartItems[existingItemIndex].quantity}`);
+    } else {
+      product.quantity = 1;
+      cartItems.push(product);
+      console.log("➕ Producto nuevo agregado al carrito.");
+    }
+
+    setLocalStorage("so-cart", cartItems);
     updateCart();
+
+    console.log("✅ Carrito actualizado:", cartItems);
   }
 
   showAddedToCartFeedback() {
@@ -57,9 +76,8 @@ export default class ProductDetails {
     if (addButton) {
       const originalText = addButton.textContent;
       addButton.textContent = "✓ Added to Cart";
-      addButton.style.backgroundColor = "#4CAF50"; // Verde para indicar éxito
+      addButton.style.backgroundColor = "#4CAF50";
 
-      // Restaurar el botón después de 2 segundos
       setTimeout(() => {
         addButton.textContent = originalText;
         addButton.style.backgroundColor = "";
@@ -68,11 +86,16 @@ export default class ProductDetails {
   }
 
   renderProductDetails() {
-    if (!this.product || !this.product.Id) return;
+    if (!this.product || !this.product.Id) {
+      console.error("❌ No se puede renderizar: producto inválido", this.product);
+      return;
+    }
+
+    console.log("🎨 Renderizando producto:", this.product.Id);
 
     const productName = document.querySelector("h2");
     if (productName) {
-      productName.textContent = this.product.Category 
+      productName.textContent = this.product.Category
         ? this.product.Category.charAt(0).toUpperCase() + this.product.Category.slice(1)
         : "Product Details";
     }
@@ -87,10 +110,21 @@ export default class ProductDetails {
       nameElement.textContent = this.product.NameWithoutBrand || this.product.Name || "";
     }
 
+    // 🔑 Manejo de imagen (local + API)
     const productImage = document.querySelector("#p-image");
-    if (productImage && this.product.Images) {
-      productImage.src = this.product.Images.PrimaryExtraLarge || "";
-      productImage.alt = this.product.NameWithoutBrand || this.product.Name || "";
+    if (productImage) {
+      let imageUrl =
+        (this.product.Images && (this.product.Images.PrimaryExtraLarge || this.product.Images.PrimaryMedium)) ||
+        this.product.Image ||
+        "../images/placeholder.jpg";
+
+      // Normalizar si es local (no empieza con http)
+      if (imageUrl && !imageUrl.startsWith("http")) {
+        imageUrl = `/images/${imageUrl.replace(/^.*images[\\/]/, "")}`;
+      }
+
+      productImage.src = imageUrl;
+      productImage.alt = this.product.NameWithoutBrand || this.product.Name || "Product";
     }
 
     const priceElement = document.querySelector("#p-price");
@@ -115,6 +149,7 @@ export default class ProductDetails {
     const cartButton = document.getElementById("add-to-cart");
     if (cartButton) {
       cartButton.dataset.id = this.product.Id;
+      console.log("🖲️ Botón Add to Cart vinculado al producto:", this.product.Id);
     }
   }
 }

@@ -131,15 +131,32 @@ export function alertMessage(message, scroll = true) {
   }
 }
 
-// Normaliza un producto para que siempre tenga la misma estructura
-export function normalizeProduct(item, quantity = 1) {
-  const product = item.Result || item; // Desenvuelve si viene dentro de Result
+export function normalizeProduct(item) {
+  if (!item) return null;
+  let product = item;
 
-  return {
-    Id: product.Id,
-    Name: product.Name || product.NameWithoutBrand || "Unnamed Product",
-    FinalPrice: product.FinalPrice || product.SuggestedRetailPrice || 0,
-    Image: product.Image || product.Images?.PrimaryMedium || "../images/placeholder.jpg",
-    quantity: quantity
-  };
+  // Desenrollar múltiples niveles de Result
+  while (product && product.Result && typeof product.Result === "object") {
+    product = product.Result;
+  }
+
+  // Caso raro: ObjectResult.Result
+  if (product && product.ObjectResult && product.ObjectResult.Result) {
+    product = product.ObjectResult.Result;
+  }
+
+  // Validación mínima
+  if (!product || !product.Id) return null;
+
+  return product;
 }
+
+/**
+ * Normaliza un array de productos
+ */
+export function normalizeProductList(items = []) {
+  return items
+    .map((item) => normalizeProduct(item))
+    .filter(Boolean);
+}
+
