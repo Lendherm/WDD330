@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleep Outside | Find Stores Near You</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="../js/geolocation.js" type="module"></script>
+    <style>
+      #map-container {
+        border: 1px solid var(--primary-color);
+        border-radius: 8px;
+        margin: 1rem 0;
+      }
+      #geolocation-info {
+        background-color: #f9f9f9;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="divider" id="main-header"></header>
+    <main class="divider">
+      <h1>Find Stores Near You</h1>
+      <p>We'll use your current location to show nearby stores where you can pick up your gear.</p>
+      <button onclick="window.location.reload()">Refresh Location</button>
+    </main>
+    <footer id="main-footer"></footer>
+  </body>
+</html>

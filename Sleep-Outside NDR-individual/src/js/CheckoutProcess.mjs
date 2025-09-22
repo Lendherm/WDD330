@@ -35,6 +35,33 @@ export default class CheckoutProcess {
   init() {
     this.list = getLocalStorage(this.key) || [];
     this.calculateItemSummary();
+    this.renderCartContents(); // 👈 ahora también muestra los productos
+  }
+
+  renderCartContents() {
+    const parentElement = document.querySelector(this.outputSelector);
+    parentElement.innerHTML = "";
+
+    if (this.list.length === 0) {
+      parentElement.innerHTML = "<p>No hay productos en tu carrito.</p>";
+      return;
+    }
+
+    this.list.forEach((item) => {
+      const imageUrl =
+        item.Image ||
+        (item.Images && item.Images.PrimaryMedium) ||
+        "../images/placeholder.jpg";
+
+      parentElement.innerHTML += `
+        <div class="checkout-item">
+          <img src="${imageUrl}" alt="${item.Name}" />
+          <h4>${item.Name}</h4>
+          <p>Cantidad: ${item.quantity || 1}</p>
+          <p>Precio: $${item.FinalPrice.toFixed(2)}</p>
+        </div>
+      `;
+    });
   }
 
   calculateItemSummary() {
@@ -44,9 +71,9 @@ export default class CheckoutProcess {
     const itemNumElement = document.querySelector(
       `${this.outputSelector} #num-items`
     );
-    
+
     itemNumElement.innerText = this.list.length;
-    
+
     const amounts = this.list.map((item) => parseFloat(item.FinalPrice));
     this.itemTotal = amounts.reduce((sum, item) => sum + item, 0);
     summaryElement.innerText = `$${this.itemTotal.toFixed(2)}`;
@@ -61,8 +88,12 @@ export default class CheckoutProcess {
 
   displayOrderTotals() {
     const taxElement = document.querySelector(`${this.outputSelector} #tax`);
-    const shippingElement = document.querySelector(`${this.outputSelector} #shipping`);
-    const orderTotalElement = document.querySelector(`${this.outputSelector} #orderTotal`);
+    const shippingElement = document.querySelector(
+      `${this.outputSelector} #shipping`
+    );
+    const orderTotalElement = document.querySelector(
+      `${this.outputSelector} #orderTotal`
+    );
 
     taxElement.innerText = `$${this.tax.toFixed(2)}`;
     shippingElement.innerText = `$${this.shipping.toFixed(2)}`;
@@ -71,7 +102,7 @@ export default class CheckoutProcess {
 
   async checkout() {
     const formElement = document.forms["checkout"];
-    
+
     // Validación del formulario
     if (!formElement.checkValidity()) {
       formElement.reportValidity();
@@ -81,7 +112,9 @@ export default class CheckoutProcess {
 
     // Validación de carrito vacío
     if (this.list.length === 0) {
-      alertMessage("Tu carrito está vacío. Agrega productos antes de proceder al pago.");
+      alertMessage(
+        "Tu carrito está vacío. Agrega productos antes de proceder al pago."
+      );
       return;
     }
 
@@ -95,17 +128,17 @@ export default class CheckoutProcess {
 
       const response = await services.checkout(order);
       console.log("Order successful:", response);
-      
+
       // Redirigir a página de éxito
       window.location.href = "../checkout/success.html";
-      
+
       // Limpiar carrito
       localStorage.removeItem(this.key);
     } catch (err) {
       console.error("Checkout error:", err);
-      
+
       // Manejo de errores específicos del servidor
-      if (err.name === 'servicesError') {
+      if (err.name === "servicesError") {
         let errorMessage = err.message;
         if (err.details) {
           // Mostrar detalles específicos de validación del servidor
@@ -113,7 +146,9 @@ export default class CheckoutProcess {
         }
         alertMessage(errorMessage);
       } else {
-        alertMessage("Error al procesar el pedido. Por favor intenta nuevamente.");
+        alertMessage(
+          "Error al procesar el pedido. Por favor intenta nuevamente."
+        );
       }
     }
   }

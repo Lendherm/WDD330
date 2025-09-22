@@ -25,22 +25,34 @@ function renderCartContents() {
 }
 
 function cartItemTemplate(item) {
+  const product = item.Result || item; // soporte por si algún item no viene envuelto
   const quantity = item.quantity || 1;
+
+  const name = product.Name || product.NameWithoutBrand || "Unnamed Product";
+  const color = product.Colors?.[0]?.ColorName || "N/A";
+  const imageUrl =
+    product.Image ||
+    product.Images?.PrimaryMedium ||
+    "../images/placeholder.jpg";
+
+  const price = product.FinalPrice || product.SuggestedRetailPrice || 0;
+
   return `<li class="cart-card divider">
     <a href="#" class="cart-card__image">
-      <img src="${item.Image}" alt="${item.Name}" />
+      <img src="${imageUrl}" alt="${name}" />
     </a>
-    <a href="#"><h2 class="card__name">${item.Name}</h2></a>
-    <p class="cart-card__color">${item.Colors[0].ColorName}</p>
-    <p class="cart-card__quantity">qty: ${quantity}</p>
-    <p class="cart-card__price">$${(item.FinalPrice * quantity).toFixed(2)}</p>
+    <a href="#"><h2 class="card__name">${name}</h2></a>
+    <p class="cart-card__color">${color}</p>
+    <p class="cart-card__quantity">Qty: ${quantity}</p>
+    <p class="cart-card__price">$${(price * quantity).toFixed(2)}</p>
   </li>`;
 }
 
 function updateTotal(cartItems) {
   const total = cartItems.reduce((sum, item) => {
+    const product = item.Result || item;
     const quantity = item.quantity || 1;
-    const price = item.FinalPrice || item.SuggestedRetailPrice || 0;
+    const price = product.FinalPrice || product.SuggestedRetailPrice || 0;
     return sum + (price * quantity);
   }, 0);
   

@@ -130,3 +130,16 @@ export function alertMessage(message, scroll = true) {
     }, 5000);
   }
 }
+
+// Normaliza un producto para que siempre tenga la misma estructura
+export function normalizeProduct(item, quantity = 1) {
+  const product = item.Result || item; // Desenvuelve si viene dentro de Result
+
+  return {
+    Id: product.Id,
+    Name: product.Name || product.NameWithoutBrand || "Unnamed Product",
+    FinalPrice: product.FinalPrice || product.SuggestedRetailPrice || 0,
+    Image: product.Image || product.Images?.PrimaryMedium || "../images/placeholder.jpg",
+    quantity: quantity
+  };
+}
