@@ -1,4 +1,9 @@
-import { getLocalStorage, loadHeaderFooter, updateCartCount, normalizeProduct } from "./utils.mjs";
+import {
+  getLocalStorage,
+  loadHeaderFooter,
+  updateCartCount,
+  normalizeProduct,
+} from "./utils.mjs";
 
 export function updateCart() {
   updateCartCount();
@@ -31,16 +36,23 @@ function cartItemTemplate(item) {
     product.Image || product.Images?.PrimaryMedium || "../images/placeholder.jpg";
   const price = Number(product.FinalPrice ?? product.SuggestedRetailPrice ?? 0);
 
-  return `<li class="cart-card divider">
-    <a href="#" class="cart-card__image">
+  return `
+  <li class="cart-card divider">
+    <div class="cart-card__image">
       <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" />
-    </a>
-    <a href="#"><h2 class="card__name">${escapeHtml(name)}</h2></a>
-    <p class="cart-card__color">${escapeHtml(color)}</p>
-    <p class="cart-card__quantity">Qty: ${quantity}</p>
-    <p class="cart-card__price">$${(price * quantity).toFixed(2)}</p>
+    </div>
+    <div class="cart-card__info">
+      <div class="cart-card__header">
+        <h2 class="card__name">${escapeHtml(name)}</h2>
+        <span class="cart-remove" data-id="${product.Id}">&times;</span>
+      </div>
+      <p class="cart-card__color">Color: ${escapeHtml(color)}</p>
+      <p class="cart-card__quantity">Qty: ${quantity}</p>
+      <p class="cart-card__price">$${(price * quantity).toFixed(2)}</p>
+    </div>
   </li>`;
 }
+
 
 function renderCartContents() {
   const cartItems = getLocalStorage("so-cart") || [];
@@ -51,10 +63,27 @@ function renderCartContents() {
     productList.innerHTML = "<li>Your cart is empty</li>";
   } else {
     productList.innerHTML = cartItems.map(cartItemTemplate).join("");
+
+    // ✅ agregar listeners a todos los botones de eliminar
+    document.querySelectorAll(".cart-remove").forEach((btn) => {
+      btn.addEventListener("click", removeFromCart);
+    });
   }
 
   updateTotal(cartItems);
   updateCartCount();
+}
+
+function removeFromCart(event) {
+  const idToRemove = event.target.getAttribute("data-id");
+  let cartItems = getLocalStorage("so-cart") || [];
+
+  cartItems = cartItems.filter(
+    (item) => String(normalizeProduct(item)?.Id) !== String(idToRemove)
+  );
+
+  localStorage.setItem("so-cart", JSON.stringify(cartItems));
+  renderCartContents();
 }
 
 function updateTotal(cartItems) {
