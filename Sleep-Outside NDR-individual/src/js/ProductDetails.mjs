@@ -127,14 +127,26 @@ export default class ProductDetails {
       productImage.alt = this.product.NameWithoutBrand || this.product.Name || "Product";
     }
 
-    const priceElement = document.querySelector("#p-price");
-    if (priceElement && this.product.FinalPrice) {
-      const euroPrice = new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency: "EUR",
-      }).format(Number(this.product.FinalPrice) * 0.85);
-      priceElement.textContent = euroPrice;
-    }
+const priceElement = document.querySelector("#p-price");
+if (priceElement) {
+  const finalPrice = Number(this.product.FinalPrice) || 0;
+  const suggestedPrice = Number(this.product.SuggestedRetailPrice) || finalPrice;
+
+  const hasDiscount = finalPrice < suggestedPrice;
+
+  if (hasDiscount) {
+    const discountPercent = Math.round(
+      ((suggestedPrice - finalPrice) / suggestedPrice) * 100
+    );
+    priceElement.innerHTML = `
+      <span class="so-final-price">$${finalPrice.toFixed(2)}</span>
+      <span class="so-old-price">$${suggestedPrice.toFixed(2)}</span>
+      <span class="so-discount-badge">-${discountPercent}%</span>
+    `;
+  } else {
+    priceElement.innerHTML = `<span class="so-final-price">$${finalPrice.toFixed(2)}</span>`;
+  }
+}
 
     const colorElement = document.querySelector("#p-color");
     if (colorElement && this.product.Colors && this.product.Colors[0]) {

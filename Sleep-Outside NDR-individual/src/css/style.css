@@ -195,6 +195,33 @@ button {
   list-style: none;
 }
 
+/* ==== Estilos únicos para descuentos ==== */
+.so-old-price {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 0.9em;
+  margin-left: 0.4rem;
+}
+
+.so-final-price {
+  font-weight: bold;
+  color: #e63946;
+}
+
+.so-discount-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e63946;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+
 .product-card {
   border: 1px solid var(--light-grey);
   border-radius: 8px;
@@ -404,6 +431,8 @@ button {
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+
+
 
 @keyframes spin {
   to { transform: translate(-50%, -50%) rotate(360deg); }

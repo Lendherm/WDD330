@@ -1,7 +1,6 @@
 import { renderListWithTemplate } from "./utils.mjs";
 
 function productCardTemplate(product) {
-  // Usamos Image (caso tents.json) o Images.PrimaryMedium (caso sleeping-bags/backpacks)
   const imageUrl =
     product.Image ||
     (product.Images && product.Images.PrimaryMedium) ||
@@ -10,21 +9,40 @@ function productCardTemplate(product) {
   const brandName = product.Brand?.Name || "";
   const productName =
     product.NameWithoutBrand || product.Name || "Unnamed Product";
-  const price = product.FinalPrice
-    ? `$${product.FinalPrice.toFixed(2)}`
-    : "$0.00";
+
+  const finalPrice = product.FinalPrice || 0;
+  const suggestedPrice = product.SuggestedRetailPrice || finalPrice;
+
+  const hasDiscount = finalPrice < suggestedPrice;
+  let discountHTML = "";
+  let priceHTML = `$${finalPrice.toFixed(2)}`;
+
+  if (hasDiscount) {
+    const discountPercent = Math.round(
+      ((suggestedPrice - finalPrice) / suggestedPrice) * 100
+    );
+    discountHTML = `<span class="so-discount-badge">-${discountPercent}%</span>`;
+    priceHTML = `
+      <span class="so-final-price">$${finalPrice.toFixed(2)}</span>
+      <span class="so-old-price">$${suggestedPrice.toFixed(2)}</span>
+    `;
+  }
 
   return `
     <li class="product-card">
       <a href="../product_pages/index.html?product=${product.Id}">
-        <img src="${imageUrl}" alt="${productName}" loading="lazy">
+        <div class="product-card__image-wrapper">
+          <img src="${imageUrl}" alt="${productName}" loading="lazy">
+          ${discountHTML}
+        </div>
         <h3 class="product-card__brand">${brandName}</h3>
         <h4 class="product-card__name">${productName}</h4>
-        <p class="product-card__price">${price}</p>
+        <p class="product-card__price">${priceHTML}</p>
       </a>
     </li>
   `;
 }
+
 
 export default class ProductList {
   constructor(category, dataSource, listElement) {
