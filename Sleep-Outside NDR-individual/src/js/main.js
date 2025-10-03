@@ -1,7 +1,6 @@
- //src/js/main.js
-import { initSearchProduct } from "./search-product.js";
+import { loadHeaderFooter } from './utils.mjs';
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ Header y footer cargados");
-  initSearchProduct();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadHeaderFooter();
+  console.log('Header loaded'); // Para verificación
 });

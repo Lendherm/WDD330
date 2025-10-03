@@ -20,16 +20,20 @@ export default class ExternalServices {
 
   // Cargar productos de una categoría (JSON local → API fallback)
   async getData(category) {
+    // 1. Intentar JSON local
     try {
       const localResponse = await fetch(`/json/${category}.json`);
-      if (!localResponse.ok) throw new Error(`Local JSON file for ${category} not found`);
-
+      if (!localResponse.ok) {
+        throw new Error(`Local JSON file for ${category} not found`);
+      }
       const localData = await localResponse.json();
+
       console.log("✅ Using local JSON data for", category);
       return { Result: localData };
     } catch (localError) {
       console.warn("⚠️ Failed to load local JSON, trying API...", localError);
 
+      // 2. Fallback → API
       try {
         const url = `${baseURL}products/search/${category}`;
         console.log("🌐 Fetching from API:", url);
@@ -43,6 +47,7 @@ export default class ExternalServices {
         if (apiData.Result && apiData.Result.length > 0) {
           return apiData;
         }
+
         throw new Error("API returned empty data");
       } catch (apiError) {
         console.error("❌ Both local and API requests failed:", apiError);
@@ -54,70 +59,60 @@ export default class ExternalServices {
   }
 
   // Buscar un producto por ID (JSON local → API fallback)
-  async findProductById(id) {
-    const categories = ["tents", "sleeping-bags", "backpacks"];
+async findProductById(id) {
+  const categories = ["tents", "sleeping-bags", "backpacks"]; // Ajusta según tus JSON locales
 
-    try {
-      for (let category of categories) {
-        const localResponse = await fetch(`/json/${category}.json`);
-        if (!localResponse.ok) continue;
+  // 1. Buscar en JSON local
+  try {
+    for (let category of categories) {
+      const localResponse = await fetch(`/json/${category}.json`);
+      if (!localResponse.ok) continue;
 
-        const localData = await localResponse.json();
-        const productList = Array.isArray(localData)
-          ? localData
-          : localData.Result || [];
+      const localData = await localResponse.json();
+      const productList = Array.isArray(localData)
+        ? localData
+        : localData.Result || [];
 
-        const found = productList.find((p) => p.Id === id);
-        if (found) {
-          console.log(`✅ Producto encontrado en JSON local (${category}) con ID ${id}`);
-          return found;
-        }
+      const found = productList.find((p) => p.Id === id);
+      if (found) {
+        console.log(
+          `✅ Producto encontrado en JSON local (${category}) con ID ${id}`
+        );
+        return found;
       }
-      console.warn(`⚠️ Producto ${id} no encontrado en JSON local. Usando API...`);
-    } catch (localError) {
-      console.warn("Error buscando en JSON local:", localError);
     }
 
-    try {
-      const url = `${baseURL}product/${id}`;
-      console.log("🌐 Fetching product from API:", url);
-
-      const response = await fetch(url);
-      console.log("📡 API response status:", response.status);
-
-      if (!response.ok) throw new Error("API request failed");
-
-      const data = await convertToJson(response);
-      console.log("✅ Producto recibido desde API:", data);
-
-      if (data && data.Result) return data.Result;
-      return data;
-    } catch (err) {
-      console.error("❌ Error al obtener producto desde API:", err);
-      return {};
-    }
+    console.warn(
+      `⚠️ Producto ${id} no encontrado en JSON local. Usando API...`
+    );
+  } catch (localError) {
+    console.warn("Error buscando en JSON local:", localError);
   }
 
-  // 🔍 NUEVA FUNCIÓN: Buscar en API por término
-  async searchInApi(searchTerm) {
-    try {
-      const url = `${baseURL}products/search/${encodeURIComponent(searchTerm)}`;
-      console.log("🌐 Buscando en API:", url);
+  // 2. Fallback → API
+  try {
+    const url = `${baseURL}product/${id}`;
+    console.log("🌐 Fetching product from API:", url);
 
-      const res = await fetch(url);
-      console.log("📡 API response status:", res.status);
+    const response = await fetch(url);
+    console.log("📡 API response status:", response.status);
 
-      if (!res.ok) throw new Error("API request failed");
+    if (!response.ok) throw new Error("API request failed");
 
-      const data = await convertToJson(res);
-      console.log("✅ Resultados desde API para búsqueda:", searchTerm, data);
+    const data = await convertToJson(response);
+    console.log("✅ Producto recibido desde API:", data);
 
-      return data.Result || [];
-    } catch (error) {
-      console.error("❌ Error en búsqueda API:", error);
-      return [];
+    // 🔑 Desempaquetar Result si existe
+    if (data && data.Result) {
+      return data.Result;
     }
+
+    return data;
+  } catch (err) {
+    console.error("❌ Error al obtener producto desde API:", err);
+    return {};
   }
+}
 
   // Enviar carrito al checkout
   async checkout(payload) {

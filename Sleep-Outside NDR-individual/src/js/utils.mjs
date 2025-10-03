@@ -1,8 +1,4 @@
-// src/js/utils.mjs
-
-// -----------------------------
 // Utilidades básicas
-// -----------------------------
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
@@ -15,9 +11,7 @@ export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// -----------------------------
-// Actualización del carrito
-// -----------------------------
+// Actualización del contador del carrito (versión mejorada)
 export function updateCartCount() {
   const cartCountElement = document.getElementById('cart-count');
   if (!cartCountElement) return;
@@ -28,13 +22,15 @@ export function updateCartCount() {
   }, 0);
   
   cartCountElement.textContent = itemCount;
-  return itemCount;
+  return itemCount; // Devuelve el conteo por si se necesita
 }
 
+// Función para ser llamada desde otras páginas
 export function updateCart() {
   updateCartCount();
 }
 
+// Resto de tus utilidades existentes...
 export function setClick(selector, callback) {
   qs(selector).addEventListener("touchend", (event) => {
     event.preventDefault();
@@ -49,9 +45,6 @@ export function getParam(param) {
   return urlParams.get(param);
 }
 
-// -----------------------------
-// Render helpers
-// -----------------------------
 export function renderListWithTemplate(template, parentElement, list, position = "afterbegin", clear = false) {
   if (clear) parentElement.innerHTML = "";
   parentElement.insertAdjacentHTML(position, list.map(template).join(""));
@@ -67,38 +60,37 @@ async function loadTemplate(path) {
   return await res.text();
 }
 
-export async function loadHeaderFooter(callback) {
+export async function loadHeaderFooter() {
   try {
     const [header, footer] = await Promise.all([
       loadTemplate("../partials/header.html"),
       loadTemplate("../partials/footer.html")
     ]);
-
+    
     const headerElement = qs("#main-header");
     const footerElement = qs("#main-footer");
-
+    
     if (headerElement) {
       renderWithTemplate(header, headerElement);
+      // Actualizar el contador después de cargar el header
       updateCartCount();
-      if (callback) callback();
     }
-
     if (footerElement) renderWithTemplate(footer, footerElement);
   } catch (error) {
     console.error("Error loading templates:", error);
   }
 }
 
-// -----------------------------
-// Alertas
-// -----------------------------
 export function alertMessage(message, scroll = true) {
+  // Remover alertas previas
   const existingAlerts = document.querySelectorAll('.alert');
   existingAlerts.forEach(alert => alert.remove());
 
+  // Crear nuevo elemento de alerta
   const alert = document.createElement('div');
   alert.classList.add('alert');
   
+  // Contenido de la alerta con mejor estructura
   alert.innerHTML = `
     <div class="alert-content">
       <p>${message}</p>
@@ -106,19 +98,30 @@ export function alertMessage(message, scroll = true) {
     </div>
   `;
 
+  // Manejar cierre de la alerta (versión corregida)
   alert.addEventListener('click', function(e) {
     if (e.target.classList.contains('close-btn')) {
       this.remove();
     }
   });
 
+  // Agregar al DOM
   const main = document.querySelector('main');
   if (main) {
     main.insertAdjacentElement('afterbegin', alert);
+    
+    // Agregar animación de aparición
     setTimeout(() => alert.classList.add('show'), 10);
+
+    // Desplazarse al inicio si es necesario
     if (scroll) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
+
+    // Auto-eliminación después de 5 segundos
     setTimeout(() => {
       if (document.body.contains(alert)) {
         alert.classList.remove('show');
@@ -128,73 +131,32 @@ export function alertMessage(message, scroll = true) {
   }
 }
 
-// -----------------------------
-// Normalización de productos
-// -----------------------------
 export function normalizeProduct(item) {
   if (!item) return null;
-
-  // Desenredar Result wrappers
   let product = item;
+
+  // Desenrollar múltiples niveles de Result
   while (product && product.Result && typeof product.Result === "object") {
     product = product.Result;
   }
-  if (product && product.ObjectResult?.Result) {
+
+  // Caso raro: ObjectResult.Result
+  if (product && product.ObjectResult && product.ObjectResult.Result) {
     product = product.ObjectResult.Result;
   }
 
-  if (!product || !(product.Id || product.id)) return null;
+  // Validación mínima
+  if (!product || !product.Id) return null;
 
-  return {
-    id: product.Id || product.id || "",
-    name: product.Name || product.NameWithoutBrand || product.title || "Sin nombre",
-    brand: product.Brand?.Name || product.brand || "",
-    price: product.FinalPrice || product.ListPrice || product.price || null,
-    listPrice: product.ListPrice || product.listPrice || null,
-    url: product.WebUrl || product.AffiliateWebUrl || product.Url || "#",
-    image: getProductImage(product),
-    isNew: product.IsNew || false,
-    isClearance: product.IsClearance || false,
-    description: product.DescriptionHtmlSimple || product.description || "",
-  };
+  return product;
 }
 
-function getProductImage(product) {
-  if (product.Image && product.Image !== "https://via.placeholder.com/150") {
-    return fixImagePath(product.Image);
-  }
-  if (product.Images) {
-    if (product.Images.PrimaryMedium) return fixImagePath(product.Images.PrimaryMedium);
-    if (product.Images.PrimaryLarge) return fixImagePath(product.Images.PrimaryLarge);
-    if (product.Images.PrimarySmall) return fixImagePath(product.Images.PrimarySmall);
-  }
-  return "https://via.placeholder.com/150";
-}
-
-function fixImagePath(path) {
-  if (!path) return "https://via.placeholder.com/150";
-  if (path.startsWith("../") || path.startsWith("./")) {
-    return window.location.origin + "/" + path.replace(/^(\.\.\/|\.\/)+/, "");
-  }
-  return path;
-}
-
+/**
+ * Normaliza un array de productos
+ */
 export function normalizeProductList(items = []) {
-  return items.map(normalizeProduct).filter(Boolean);
+  return items
+    .map((item) => normalizeProduct(item))
+    .filter(Boolean);
 }
 
-export function normalizeProductData(data) {
-  if (!data) return [];
-
-  let items = data;
-  while (items.Result && typeof items.Result === "object") {
-    items = items.Result;
-  }
-
-  if (Array.isArray(items)) return items;
-  if (items.Items && Array.isArray(items.Items)) return items.Items;
-  if (Array.isArray(items.Result)) return items.Result;
-
-  console.warn("⚠️ Estructura de datos desconocida:", data);
-  return [];
-}
