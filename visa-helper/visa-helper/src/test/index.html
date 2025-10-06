@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Helper - Asistente para Trámites de Visa</title>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* ===== ESTILOS BASE (RECICLADOS) ===== */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            font-family: 'Poppins', Arial, sans-serif;
+        }
+
+        /* Header */
+        .site-header {
+            background-color: #0a3d62;
+            color: white;
+            padding: 0%;
+            width: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            width: 100%;
+        }
+
+        .menu-icon {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .menu-icon-symbol {
+            font-size: 24px;
+            margin-right: 5px;
+        }
+
+        .menu-icon-text {
+            font-size: 16px;
+        }
+
+        .anniversary {
+            text-align: center;
+            color: #78e08f;
+            line-height: 1.2;
+        }
+
+        .anniversary-title {
+            font-size: 14px;
+        }
+
+        .anniversary-year {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .anniversary-text {
+            font-size: 12px;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .affiliate-button {
+            background: linear-gradient(to right, #0a3d62, #60a3bc);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .affiliate-button:hover {
+            background: linear-gradient(to right, #60a3bc, #0a3d62);
+            color: white;
+        }
+
+        /* Menú lateral */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            display: none;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -430px;
+            width: 430px;
+            height: 100%;
+            background: rgba(15, 41, 91, 0.95);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            z-index: 999;
+            color: #ffffff;
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .side-menu nav {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .side-menu h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #ffffff;
+            border-bottom: 1px solid #78e08f;
+            padding-bottom: 10px;
+        }
+
+        .side-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .side-menu ul li {
+            margin-bottom: 15px;
+        }
+
+        .side-menu ul li a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .side-menu ul li a:hover {
+            color: #78e08f;
+        }
+
+        .side-menu ul li a i {
+            color: #78e08f;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .sidebar-content {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-content h3, .sidebar-content h4 {
+            color: #78e08f;
+            margin-bottom: 10px;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #78e08f;
+            transition: width 0.3s ease;
+        }
+
+        .deadlines {
+            margin-bottom: 20px;
+        }
+
+        .deadline-item {
+            background: rgba(255,255,255,0.1);
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .statistics p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .contact-info {
+            font-size: 14px;
+            color: white;
+            line-height: 1.6;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .contact-info i {
+            color: #78e08f;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .contact-info a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .contact-info a:hover {
+            color: #78e08f;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Main Content */
+        main {
+            min-height: calc(100vh - 150px);
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Dashboard */
+        .welcome-banner {
+            background: linear-gradient(to right, #0a3d62, #60a3bc);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome-banner h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+
+        .welcome-banner p {
+            margin: 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .dashboard-card h3 {
+            margin-top: 0;
+            color: #0a3d62;
+            border-bottom: 2px solid #78e08f;
+            padding-bottom: 10px;
+        }
+
+        .dashboard-card .progress {
+            background: #0a3d62;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .dashboard-card .status {
+            background: #78e08f;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Formularios */
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .form-btn {
+            background: #0a3d62;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .form-btn:hover {
+            background: #60a3bc;
+        }
+
+        .form-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #0a3d62;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #0a3d62;
+            outline: none;
+        }
+
+        .form-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .form-progress:before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+
+        .progress-step .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .progress-step.active .step-circle {
+            background: #0a3d62;
+        }
+
+        .progress-step.completed .step-circle {
+            background: #78e08f;
+        }
+
+        /* Documentos */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .document-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .document-card i {
+            font-size: 40px;
+            color: #0a3d62;
+            margin-bottom: 15px;
+        }
+
+        .document-card h3 {
+            margin: 0 0 10px 0;
+            color: #0a3d62;
+        }
+
+        .document-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-required {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #0a3d62;
+            color: #fff;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .menu-icon, .affiliate-button {
+                order: 1;
+            }
+
+            .anniversary, .logo {
+                order: 2;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .affiliate-button {
+                width: 100%;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .side-menu {
+                width: 100%;
+                left: -100%;
+            }
+
+            .side-menu.open {
+                left: 0;
+            }
+
+            .side-menu nav {
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-banner h1 {
+                font-size: 1.8rem;
+            }
+
+            .welcome-banner p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                height: 40px;
+            }
+
+            .menu-icon-symbol {
+                font-size: 20px;
+            }
+
+            .affiliate-button {
+                font-size: 14px;
+            }
+
+            .side-menu {
+                width: 100%;
+            }
+
+            .form-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <!-- Ícono del menú hamburguesa -->
+            <div class="menu-icon" id="menu-toggle">
+                <span class="menu-icon-symbol">&#9776;</span>
+                <span class="menu-icon-text">Menú</span>
+            </div>
+
+            <!-- Título del proyecto -->
+            <div class="anniversary">
+                <div class="anniversary-title">Tu Asistente</div>
+                <div class="anniversary-year">Visa Helper</div>
+                <div class="anniversary-text">para trámites de visa</div>
+            </div>
+
+            <!-- Logo -->
+            <div class="logo">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjMGEzZDYyIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlZJU0EgSEVMRUVSPC90ZXh0Pgo8L3N2Zz4K" alt="Logo Visa Helper">
+            </div>
+
+            <!-- Botón de acción principal -->
+            <a href="#" class="affiliate-button" id="start-process">INICIAR PROCESO</a>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <div class="overlay" id="overlay"></div>
+    <div class="side-menu" id="side-menu">
+        <nav>
+            <h2>Menú Principal</h2>
+            <ul>
+                <li><a href="#" data-section="dashboard"><i class="bi bi-house-door"></i> Dashboard</a></li>
+                <li><a href="#" data-section="process"><i class="bi bi-journey"></i> Mi Proceso</a></li>
+                <li><a href="#" data-section="forms"><i class="bi bi-file-earmark-text"></i> Formularios</a></li>
+                <li><a href="#" data-section="documents"><i class="bi bi-folder"></i> Documentos</a></li>
+                <li><a href="#" data-section="appointments"><i class="bi bi-calendar-check"></i> Citas</a></li>
+                <li><a href="#" data-section="tracking"><i class="bi bi-graph-up"></i> Seguimiento</a></li>
+                <li><a href="#" data-section="resources"><i class="bi bi-info-circle"></i> Recursos</a></li>
+                <li><a href="#" data-section="profile"><i class="bi bi-person"></i> Mi Perfil</a></li>
+            </ul>
+
+            <div class="sidebar-content">
+                <h3>Progreso Actual</h3>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 25%"></div>
+                    </div>
+                    <p id="progress-text">25% completado</p>
+                </div>
+
+                <h4>Próximos Vencimientos</h4>
+                <div id="deadlines-list" class="deadlines">
+                    <div class="deadline-item">Formulario DS-160 - 15 días</div>
+                    <div class="deadline-item">Cita en embajada - 30 días</div>
+                </div>
+
+                <h4>Estadísticas</h4>
+                <div class="statistics">
+                    <p><strong>Formularios:</strong> <span id="forms-completed">2</span>/8</p>
+                    <p><strong>Documentos:</strong> <span id="docs-uploaded">3</span>/12</p>
+                    <p><strong>Citas:</strong> <span id="appointments-scheduled">1</span>/3</p>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <p><i class="bi bi-info-circle"></i> Información oficial: 
+                    <a href="https://travel.state.gov">travel.state.gov</a>
+                </p>
+                <p><i class="bi bi-clock"></i> Tiempo promedio: 3-6 meses</p>
+                <p><i class="bi bi-currency-dollar"></i> Costos: $185 - $500 USD</p>
+            </div>
+        </nav>
+    </div>
+
+    <main id="main-content">
+        <!-- Dashboard -->
+        <div id="dashboard" class="content-section active">
+            <div class="welcome-banner">
+                <h1>Bienvenido a Visa Helper</h1>
+                <p>Tu asistente personal para trámites de visa americana</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card" data-section="forms">
+                    <h3>Formularios</h3>
+                    <p>Completa los formularios requeridos para tu visa</p>
+                    <div class="progress">2/8</div>
+                </div>
+                <div class="dashboard-card" data-section="documents">
+                    <h3>Documentos</h3>
+                    <p>Sube y organiza los documentos necesarios</p>
+                    <div class="progress">3/12</div>
+                </div>
+                <div class="dashboard-card" data-section="appointments">
+                    <h3>Citas</h3>
+                    <p>Programa y gestiona tus citas</p>
+                    <div class="progress">1/3</div>
+                </div>
+                <div class="dashboard-card" data-section="tracking">
+                    <h3>Seguimiento</h3>
+                    <p>Revisa el estado de tu solicitud</p>
+                    <div class="status">En Proceso</div>
+                </div>
+                <div class="dashboard-card" data-section="process">
+                    <h3>Mi Proceso</h3>
+                    <p>Visualiza el progreso completo de tu trámite</p>
+                    <div class="progress">25%</div>
+                </div>
+                <div class="dashboard-card" data-section="resources">
+                    <h3>Recursos</h3>
+                    <p>Encuentra guías y preguntas frecuentes</p>
+                    <div class="status">Disponible</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formularios -->
+        <div id="forms" class="content-section">
+            <div class="welcome-banner">
+                <h1>Formularios de Visa</h1>
+                <p>Completa los formularios necesarios paso a paso</p>
+            </div>
+            
+            <div class="form-container">
+                <div class="form-progress">
+                    <div class="progress-step active">
+                        <div class="step-circle">1</div>
+                        <div>Información Personal</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">2</div>
+                        <div>Información de Viaje</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">3</div>
+                        <div>Antecedentes</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">4</div>
+                        <div>Revisión</div>
+                    </div>
+                </div>
+                
+                <form id="visa-form">
+                    <div class="form-step active" id="step-1">
+                        <h3>Información Personal</h3>
+                        <div class="form-group">
+                            <label for="firstName">Nombre(s)</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Apellidos</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthDate">Fecha de Nacimiento</label>
+                            <input type="date" id="birthDate" name="birthDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">País de Nacimiento</label>
+                            <select id="country" name="country" required>
+                                <option value="">Selecciona un país</option>
+                                <option value="MX">México</option>
+                                <option value="CO">Colombia</option>
+                                <option value="AR">Argentina</option>
+                                <option value="ES">España</option>
+                                <option value="US">Estados Unidos</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step" id="step-2">
+                        <h3>Información de Viaje</h3>
+                        <div class="form-group">
+                            <label for="visaType">Tipo de Visa</label>
+                            <select id="visaType" name="visaType" required>
+                                <option value="">Selecciona un tipo</option>
+                                <option value="B1/B2">Turista/Negocios (B1/B2)</option>
+                                <option value="F1">Estudiante (F1)</option>
+                                <option value="H1B">Trabajador (H1B)</option>
+                                <option value="J1">Intercambio (J1)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="purpose">Propósito del Viaje</label>
+                            <textarea id="purpose" name="purpose" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duración Estimada</label>
+                            <input type="text" id="duration" name="duration" placeholder="Ej: 2 semanas" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step" id="step-3">
+                        <h3>Antecedentes</h3>
+                        <div class="form-group">
+                            <label>¿Ha tenido visa americana anteriormente?</label>
+                            <div>
+                                <input type="radio" id="prevVisaYes" name="prevVisa" value="yes">
+                                <label for="prevVisaYes">Sí</label>
+                                <input type="radio" id="prevVisaNo" name="prevVisa" value="no">
+                                <label for="prevVisaNo">No</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>¿Tiene antecedentes penales?</label>
+                            <div>
+                                <input type="radio" id="criminalYes" name="criminal" value="yes">
+                                <label for="criminalYes">Sí</label>
+                                <input type="radio" id="criminalNo" name="criminal" value="no">
+                                <label for="criminalNo">No</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalInfo">Información Adicional</label>
+                            <textarea id="additionalInfo" name="additionalInfo" rows="4"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step" id="step-4">
+                        <h3>Revisión</h3>
+                        <div id="form-review">
+                            <!-- Los datos del formulario se mostrarán aquí -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-navigation">
+                        <button type="button" class="form-btn" id="prev-btn" disabled>Anterior</button>
+                        <button type="button" class="form-btn" id="next-btn">Siguiente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Documentos -->
+        <div id="documents" class="content-section">
+            <div class="welcome-banner">
+                <h1>Documentos Requeridos</h1>
+                <p>Sube y gestiona todos los documentos necesarios para tu visa</p>
+            </div>
+            
+            <div class="documents-grid">
+                <div class="document-card">
+                    <i class="bi bi-passport"></i>
+                    <h3>Pasaporte</h3>
+                    <p>Válido por al menos 6 meses</p>
+                    <div class="document-status status-completed">Completado</div>
+                </div>
+                <div class="document-card">
+                    <i class="bi bi-image"></i>
+                    <h3>Fotografías</h3>
+                    <p>2 fotos 5x5 cm fondo blanco</p>
+                    <div class="document-status status-completed">Completado</div>
+                </div>
+                <div class="document-card">
+                    <i class="bi bi-file-text"></i>
+                    <h3>Formulario DS-160</h3>
+                    <p>Confirmación del formulario</p>
+                    <div class="document-status status-completed">Completado</div>
+                </div>
+                <div class="document-card">
+                    <i class="bi bi-cash-stack"></i>
+                    <h3>Comprobante de Pago</h3>
+                    <p>Pago de tarifa de visa</p>
+                    <div class="document-status status-pending">Pendiente</div>
+                </div>
+                <div class="document-card">
+                    <i class="bi bi-briefcase"></i>
+                    <h3>Constancia Laboral</h3>
+                    <p>Carta de empleo actual</p>
+                    <div class="document-status status-required">Requerido</div>
+                </div>
+                <div class="document-card">
+                    <i class="bi bi-bank"></i>
+                    <h3>Estados de Cuenta</h3>
+                    <p>Últimos 3 meses</p>
+                    <div class="document-status status-required">Requerido</div>
+                </div>
+                <div class="document-card">
+                    <i class="bi bi-house"></i>
+                    <h3>Comprobante de Domicilio</h3>
+                    <p>Recibo de luz, agua o teléfono</p>
+                    <div class="document-status status-required">Requerido</div>
+                </div>
+                <div class="document-card">
+                    <i class="bi bi-airplane"></i>
+                    <h3>Itinerario de Viaje</h3>
+                    <p>Boletos de avión y hotel</p>
+                    <div class="document-status status-required">Requerido</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Citas -->
+        <div id="appointments" class="content-section">
+            <div class="welcome-banner">
+                <h1>Gestión de Citas</h1>
+                <p>Programa y administra tus citas para la visa</p>
+            </div>
+            
+            <div class="form-container">
+                <h3>Próximas Citas</h3>
+                <div class="deadlines">
+                    <div class="deadline-item">
+                        <strong>Entrevista en Embajada</strong><br>
+                        Fecha: 15 de Noviembre, 2023<br>
+                        Hora: 10:30 AM<br>
+                        Lugar: Embajada de EE.UU., Ciudad de México
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 30px;">Programar Nueva Cita</h3>
+                <div class="form-group">
+                    <label for="appointment-type">Tipo de Cita</label>
+                    <select id="appointment-type" name="appointment-type">
+                        <option value="">Selecciona un tipo</option>
+                        <option value="biometrics">Toma de Huellas</option>
+                        <option value="interview">Entrevista</option>
+                        <option value="document-delivery">Entrega de Documentos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-date">Fecha Preferida</label>
+                    <input type="date" id="appointment-date" name="appointment-date">
+                </div>
+                <div class="form-group">
+                    <label for="appointment-time">Hora Preferida</label>
+                    <select id="appointment-time" name="appointment-time">
+                        <option value="">Selecciona una hora</option>
+                        <option value="09:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="13:00">1:00 PM</option>
+                        <option value="14:00">2:00 PM</option>
+                    </select>
+                </div>
+                <button class="form-btn">Programar Cita</button>
+            </div>
+        </div>
+
+        <!-- Recursos -->
+        <div id="resources" class="content-section">
+            <div class="welcome-banner">
+                <h1>Recursos y Ayuda</h1>
+                <p>Encuentra información útil para tu proceso de visa</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Preguntas Frecuentes</h3>
+                    <p>Resuelve tus dudas más comunes sobre el proceso</p>
+                    <div class="status">25 Preguntas</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Guías Paso a Paso</h3>
+                    <p>Sigue nuestras guías detalladas para cada tipo de visa</p>
+                    <div class="status">5 Guías</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Calculadora de Costos</h3>
+                    <p>Estima los gastos de tu proceso de visa</p>
+                    <div class="status">Disponible</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Checklists Descargables</h3>
+                    <p>Listas de verificación para no olvidar nada</p>
+                    <div class="status">3 Checklists</div>
+                </div>
+            </div>
+            
+            <div class="form-container" style="margin-top: 30px;">
+                <h3>Enlaces Oficiales</h3>
+                <ul>
+                    <li><a href="https://travel.state.gov" target="_blank">Departamento de Estado de EE.UU.</a></li>
+                    <li><a href="https://ceac.state.gov" target="_blank">Formulario DS-160 en línea</a></li>
+                    <li><a href="https://ais.usvisa-info.com" target="_blank">Sistema de Información de Visas</a></li>
+                    <li><a href="https://ustraveldocs.com" target="_blank">Centro de Solicitud de Visa</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="currentYear"></span> Visa Helper - Proyecto WDD 330</p>
+        <p id="lastModified"></p>
+    </footer>
+
+    <script>
+        // ===== INICIALIZACIÓN DE LA APLICACIÓN =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Actualizar año actual y última modificación
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            document.getElementById('lastModified').textContent = 'Última modificación: ' + document.lastModified;
+            
+            // Configurar menú lateral
+            const menuToggle = document.getElementById('menu-toggle');
+            const sideMenu = document.getElementById('side-menu');
+            const overlay = document.getElementById('overlay');
+            
+            menuToggle.addEventListener('click', () => {
+                sideMenu.classList.toggle('open');
+                overlay.classList.toggle('active');
+            });
+            
+            overlay.addEventListener('click', () => {
+                sideMenu.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+            
+            // Navegación entre secciones
+            document.querySelectorAll('.side-menu a[data-section]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = e.target.getAttribute('data-section');
+                    navigateToSection(section);
+                    
+                    // Cerrar menú en móviles
+                    if (window.innerWidth <= 768) {
+                        sideMenu.classList.remove('open');
+                        overlay.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Navegación desde las tarjetas del dashboard
+            document.querySelectorAll('.dashboard-card[data-section]').forEach(card => {
+                card.addEventListener('click', () => {
+                    const section = card.getAttribute('data-section');
+                    navigateToSection(section);
+                });
+            });
+            
+            // Botón de iniciar proceso
+            document.getElementById('start-process').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToSection('forms');
+            });
+            
+            // Navegación del formulario
+            setupFormNavigation();
+            
+            // Inicializar la aplicación
+            function navigateToSection(section) {
+                // Ocultar todas las secciones
+                document.querySelectorAll('.content-section').forEach(sec => {
+                    sec.classList.remove('active');
+                });
+                
+                // Mostrar sección seleccionada
+                document.getElementById(section).classList.add('active');
+                
+                // Actualizar enlace activo en el menú
+                document.querySelectorAll('.side-menu a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                document.querySelector(`.side-menu a[data-section="${section}"]`).classList.add('active');
+            }
+            
+            // Configurar navegación del formulario
+            function setupFormNavigation() {
+                const formSteps = document.querySelectorAll('.form-step');
+                const progressSteps = document.querySelectorAll('.progress-step');
+                const prevBtn = document.getElementById('prev-btn');
+                const nextBtn = document.getElementById('next-btn');
+                let currentStep = 0;
+                
+                // Actualizar visibilidad de botones
+                function updateButtons() {
+                    prevBtn.disabled = currentStep === 0;
+                    if (currentStep === formSteps.length - 1) {
+                        nextBtn.textContent = 'Enviar';
+                    } else {
+                        nextBtn.textContent = 'Siguiente';
+                    }
+                }
+                
+                // Actualizar pasos de progreso
+                function updateProgress() {
+                    progressSteps.forEach((step, index) => {
+                        if (index < currentStep) {
+                            step.classList.add('completed');
+                            step.classList.remove('active');
+                        } else if (index === currentStep) {
+                            step.classList.add('active');
+                            step.classList.remove('completed');
+                        } else {
+                            step.classList.remove('active', 'completed');
+                        }
+                    });
+                }
+                
+                // Mostrar paso actual
+                function showStep(stepIndex) {
+                    formSteps.forEach((step, index) => {
+                        step.classList.toggle('active', index === stepIndex);
+                    });
+                    currentStep = stepIndex;
+                    updateButtons();
+                    updateProgress();
+                    
+                    // Si es el último paso, mostrar resumen
+                    if (stepIndex === formSteps.length - 1) {
+                        showFormReview();
+                    }
+                }
+                
+                // Mostrar resumen del formulario
+                function showFormReview() {
+                    const formData = new FormData(document.getElementById('visa-form'));
+                    let reviewHTML = '<div class="form-review-item"><h4>Información Personal</h4>';
+                    reviewHTML += `<p><strong>Nombre:</strong> ${formData.get('firstName')} ${formData.get('lastName')}</p>`;
+                    reviewHTML += `<p><strong>Fecha de Nacimiento:</strong> ${formData.get('birthDate')}</p>`;
+                    reviewHTML += `<p><strong>País de Nacimiento:</strong> ${formData.get('country')}</p></div>`;
+                    
+                    reviewHTML += '<div class="form-review-item"><h4>Información de Viaje</h4>';
+                    reviewHTML += `<p><strong>Tipo de Visa:</strong> ${formData.get('visaType')}</p>`;
+                    reviewHTML += `<p><strong>Propósito:</strong> ${formData.get('purpose')}</p>`;
+                    reviewHTML += `<p><strong>Duración:</strong> ${formData.get('duration')}</p></div>`;
+                    
+                    reviewHTML += '<div class="form-review-item"><h4>Antecedentes</h4>';
+                    reviewHTML += `<p><strong>Visa Anterior:</strong> ${formData.get('prevVisa') === 'yes' ? 'Sí' : 'No'}</p>`;
+                    reviewHTML += `<p><strong>Antecedentes Penales:</strong> ${formData.get('criminal') === 'yes' ? 'Sí' : 'No'}</p>`;
+                    reviewHTML += `<p><strong>Información Adicional:</strong> ${formData.get('additionalInfo') || 'Ninguna'}</p></div>`;
+                    
+                    document.getElementById('form-review').innerHTML = reviewHTML;
+                }
+                
+                // Event listeners para botones de navegación
+                prevBtn.addEventListener('click', () => {
+                    if (currentStep > 0) {
+                        showStep(currentStep - 1);
+                    }
+                });
+                
+                nextBtn.addEventListener('click', () => {
+                    if (currentStep < formSteps.length - 1) {
+                        showStep(currentStep + 1);
+                    } else {
+                        // Enviar formulario
+                        alert('Formulario enviado correctamente. Revisa tu correo para más instrucciones.');
+                        navigateToSection('dashboard');
+                    }
+                });
+                
+                // Inicializar formulario
+                showStep(0);
+            }
+        });
+    </script>
+</body>
+</html>

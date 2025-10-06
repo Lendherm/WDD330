@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Helper - Asistente para Trámites de Visa</title>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./src/styles/main.css">
+    <link rel="stylesheet" href="./src/styles/components.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="menu-icon" id="menu-toggle">
+                <span class="menu-icon-symbol">&#9776;</span>
+                <span class="menu-icon-text">Menú</span>
+            </div>
+
+            <div class="anniversary">
+                <div class="anniversary-title">Tu Asistente</div>
+                <div class="anniversary-year">Visa Helper</div>
+                <div class="anniversary-text">para trámites de visa</div>
+            </div>
+
+            <div class="logo">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMjAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjMGEzZDYyIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlZJU0EgSEVMRUVSPC90ZXh0Pgo8L3N2Zz4K" alt="Logo Visa Helper">
+            </div>
+
+            <a href="#" class="affiliate-button" id="start-process">INICIAR PROCESO</a>
+        </div>
+    </header>
+
+    <!-- Menú lateral -->
+    <div class="overlay" id="overlay"></div>
+    <div class="side-menu" id="side-menu">
+        <nav>
+            <h2>Menú Principal</h2>
+            <ul>
+                <li><a href="#" data-section="dashboard"><i class="bi bi-house-door"></i> Dashboard</a></li>
+                <li><a href="#" data-section="process"><i class="bi bi-journey"></i> Mi Proceso</a></li>
+                <li><a href="#" data-section="forms"><i class="bi bi-file-earmark-text"></i> Formularios</a></li>
+                <li><a href="#" data-section="documents"><i class="bi bi-folder"></i> Documentos</a></li>
+                <li><a href="#" data-section="appointments"><i class="bi bi-calendar-check"></i> Citas</a></li>
+                <li><a href="#" data-section="tracking"><i class="bi bi-graph-up"></i> Seguimiento</a></li>
+                <li><a href="#" data-section="resources"><i class="bi bi-info-circle"></i> Recursos</a></li>
+                <li><a href="#" data-section="profile"><i class="bi bi-person"></i> Mi Perfil</a></li>
+            </ul>
+
+            <div class="sidebar-content">
+                <h3>Progreso Actual</h3>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 25%"></div>
+                    </div>
+                    <p id="progress-text">25% completado</p>
+                </div>
+
+                <h4>Próximos Vencimientos</h4>
+                <div id="deadlines-list" class="deadlines">
+                    <div class="deadline-item">Formulario DS-160 - 15 días</div>
+                    <div class="deadline-item">Cita en embajada - 30 días</div>
+                </div>
+
+                <h4>Estadísticas</h4>
+                <div class="statistics">
+                    <p><strong>Formularios:</strong> <span id="forms-completed">2</span>/8</p>
+                    <p><strong>Documentos:</strong> <span id="docs-uploaded">3</span>/12</p>
+                    <p><strong>Citas:</strong> <span id="appointments-scheduled">1</span>/3</p>
+                </div>
+
+                <!-- Sección de APIs -->
+                <h4>Información en Tiempo Real</h4>
+                <div class="api-info">
+                    <div class="api-item">
+                        <strong>Traducción:</strong> 
+                        <span id="translation-status" class="api-status">Disponible</span>
+                    </div>
+                    <div class="api-item">
+                        <strong>Países:</strong> 
+                        <span id="countries-status" class="api-status">Cargando...</span>
+                    </div>
+                    <div class="api-item">
+                        <strong>Calendario:</strong> 
+                        <span id="calendar-status" class="api-status">Conectado</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <p><i class="bi bi-info-circle"></i> Información oficial: 
+                    <a href="https://travel.state.gov">travel.state.gov</a>
+                </p>
+                <p><i class="bi bi-clock"></i> Tiempo promedio: 3-6 meses</p>
+                <p><i class="bi bi-currency-dollar"></i> Costos: $185 - $500 USD</p>
+            </div>
+        </nav>
+    </div>
+
+    <main id="main-content">
+        <!-- Dashboard -->
+        <div id="dashboard" class="content-section active">
+            <div class="welcome-banner">
+                <h1>Bienvenido a Visa Helper</h1>
+                <p>Tu asistente personal para trámites de visa americana</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card" data-section="forms">
+                    <h3>Formularios</h3>
+                    <p>Completa los formularios requeridos para tu visa</p>
+                    <div class="progress">2/8</div>
+                </div>
+                <div class="dashboard-card" data-section="documents">
+                    <h3>Documentos</h3>
+                    <p>Sube y organiza los documentos necesarios</p>
+                    <div class="progress">3/12</div>
+                </div>
+                <div class="dashboard-card" data-section="appointments">
+                    <h3>Citas</h3>
+                    <p>Programa y gestiona tus citas</p>
+                    <div class="progress">1/3</div>
+                </div>
+                <div class="dashboard-card" data-section="tracking">
+                    <h3>Seguimiento</h3>
+                    <p>Revisa el estado de tu solicitud</p>
+                    <div class="status">En Proceso</div>
+                </div>
+                <div class="dashboard-card" data-section="process">
+                    <h3>Mi Proceso</h3>
+                    <p>Visualiza el progreso completo de tu trámite</p>
+                    <div class="progress">25%</div>
+                </div>
+                <div class="dashboard-card" data-section="resources">
+                    <h3>Recursos</h3>
+                    <p>Encuentra guías y preguntas frecuentes</p>
+                    <div class="status">Disponible</div>
+                </div>
+            </div>
+
+            <!-- Sección de APIs en Dashboard -->
+            <div class="api-dashboard">
+                <h3>Herramientas Integradas</h3>
+                <div class="api-tools">
+                    <div class="api-tool-card">
+                        <i class="bi bi-translate"></i>
+                        <h4>Traductor</h4>
+                        <p>Traduce documentos al instante</p>
+                        <button class="api-tool-btn" onclick="TranslationService.demoTranslate()">Probar Traductor</button>
+                    </div>
+                    <div class="api-tool-card">
+                        <i class="bi bi-globe"></i>
+                        <h4>Información de Países</h4>
+                        <p>Datos actualizados de todos los países</p>
+                        <button class="api-tool-btn" onclick="CountryService.loadCountries()">Cargar Países</button>
+                    </div>
+                    <div class="api-tool-card">
+                        <i class="bi bi-calendar-plus"></i>
+                        <h4>Recordatorios</h4>
+                        <p>Agrega citas a tu calendario</p>
+                        <button class="api-tool-btn" onclick="CalendarService.demoAddEvent()">Agregar Recordatorio</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formularios -->
+        <div id="forms" class="content-section">
+            <div class="welcome-banner">
+                <h1>Formularios de Visa</h1>
+                <p>Completa los formularios necesarios paso a paso</p>
+            </div>
+            
+            <div class="form-container">
+                <div class="form-progress">
+                    <div class="progress-step active">
+                        <div class="step-circle">1</div>
+                        <div>Información Personal</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">2</div>
+                        <div>Información de Viaje</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">3</div>
+                        <div>Antecedentes</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">4</div>
+                        <div>Revisión</div>
+                    </div>
+                </div>
+                
+                <form id="visa-form">
+                    <div class="form-step active" id="step-1">
+                        <h3>Información Personal</h3>
+                        <div class="form-group">
+                            <label for="firstName">Nombre(s)</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Apellidos</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthDate">Fecha de Nacimiento</label>
+                            <input type="date" id="birthDate" name="birthDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">País de Nacimiento</label>
+                            <select id="country" name="country" required>
+                                <option value="">Cargando países...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Teléfono</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step" id="step-2">
+                        <h3>Información de Viaje</h3>
+                        <div class="form-group">
+                            <label for="visaType">Tipo de Visa</label>
+                            <select id="visaType" name="visaType" required>
+                                <option value="">Selecciona un tipo</option>
+                                <option value="B1/B2">Turista/Negocios (B1/B2)</option>
+                                <option value="F1">Estudiante (F1)</option>
+                                <option value="H1B">Trabajador (H1B)</option>
+                                <option value="J1">Intercambio (J1)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="purpose">Propósito del Viaje</label>
+                            <textarea id="purpose" name="purpose" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duración Estimada</label>
+                            <input type="text" id="duration" name="duration" placeholder="Ej: 2 semanas" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="travelDate">Fecha Estimada de Viaje</label>
+                            <input type="date" id="travelDate" name="travelDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step" id="step-3">
+                        <h3>Antecedentes</h3>
+                        <div class="form-group">
+                            <label>¿Ha tenido visa americana anteriormente?</label>
+                            <div class="radio-group">
+                                <input type="radio" id="prevVisaYes" name="prevVisa" value="yes">
+                                <label for="prevVisaYes">Sí</label>
+                                <input type="radio" id="prevVisaNo" name="prevVisa" value="no">
+                                <label for="prevVisaNo">No</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>¿Tiene antecedentes penales?</label>
+                            <div class="radio-group">
+                                <input type="radio" id="criminalYes" name="criminal" value="yes">
+                                <label for="criminalYes">Sí</label>
+                                <input type="radio" id="criminalNo" name="criminal" value="no">
+                                <label for="criminalNo">No</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalInfo">Información Adicional</label>
+                            <textarea id="additionalInfo" name="additionalInfo" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="translate-btn" onclick="TranslationService.translateForm()">
+                                <i class="bi bi-translate"></i> Traducir al Inglés
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step" id="step-4">
+                        <h3>Revisión</h3>
+                        <div id="form-review">
+                            <!-- Los datos del formulario se mostrarán aquí -->
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="calendar-btn" onclick="CalendarService.addFormDeadline()">
+                                <i class="bi bi-calendar-plus"></i> Agregar Recordatorio
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-navigation">
+                        <button type="button" class="form-btn" id="prev-btn" disabled>Anterior</button>
+                        <button type="button" class="form-btn" id="next-btn">Siguiente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Documentos -->
+        <div id="documents" class="content-section">
+            <div class="welcome-banner">
+                <h1>Documentos Requeridos</h1>
+                <p>Sube y gestiona todos los documentos necesarios para tu visa</p>
+            </div>
+            
+            <div class="documents-grid" id="documents-container">
+                <!-- Los documentos se cargarán dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Citas -->
+        <div id="appointments" class="content-section">
+            <div class="welcome-banner">
+                <h1>Gestión de Citas</h1>
+                <p>Programa y administra tus citas para la visa</p>
+            </div>
+            
+            <div class="form-container">
+                <h3>Próximas Citas</h3>
+                <div class="deadlines" id="appointments-list">
+                    <!-- Las citas se cargarán dinámicamente -->
+                </div>
+                
+                <h3 style="margin-top: 30px;">Programar Nueva Cita</h3>
+                <div class="form-group">
+                    <label for="appointment-type">Tipo de Cita</label>
+                    <select id="appointment-type" name="appointment-type">
+                        <option value="">Selecciona un tipo</option>
+                        <option value="biometrics">Toma de Huellas</option>
+                        <option value="interview">Entrevista</option>
+                        <option value="document-delivery">Entrega de Documentos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-date">Fecha Preferida</label>
+                    <input type="date" id="appointment-date" name="appointment-date">
+                </div>
+                <div class="form-group">
+                    <label for="appointment-time">Hora Preferida</label>
+                    <select id="appointment-time" name="appointment-time">
+                        <option value="">Selecciona una hora</option>
+                        <option value="09:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="13:00">1:00 PM</option>
+                        <option value="14:00">2:00 PM</option>
+                    </select>
+                </div>
+                <button class="form-btn" onclick="CalendarService.scheduleAppointment()">Programar Cita</button>
+            </div>
+        </div>
+
+        <!-- Recursos -->
+        <div id="resources" class="content-section">
+            <div class="welcome-banner">
+                <h1>Recursos y Ayuda</h1>
+                <p>Encuentra información útil para tu proceso de visa</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Preguntas Frecuentes</h3>
+                    <p>Resuelve tus dudas más comunes sobre el proceso</p>
+                    <div class="status">25 Preguntas</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Guías Paso a Paso</h3>
+                    <p>Sigue nuestras guías detalladas para cada tipo de visa</p>
+                    <div class="status">5 Guías</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Calculadora de Costos</h3>
+                    <p>Estima los gastos de tu proceso de visa</p>
+                    <div class="status">Disponible</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Checklists Descargables</h3>
+                    <p>Listas de verificación para no olvidar nada</p>
+                    <div class="status">3 Checklists</div>
+                </div>
+            </div>
+            
+            <div class="form-container" style="margin-top: 30px;">
+                <h3>Enlaces Oficiales</h3>
+                <ul>
+                    <li><a href="https://travel.state.gov" target="_blank">Departamento de Estado de EE.UU.</a></li>
+                    <li><a href="https://ceac.state.gov" target="_blank">Formulario DS-160 en línea</a></li>
+                    <li><a href="https://ais.usvisa-info.com" target="_blank">Sistema de Información de Visas</a></li>
+                    <li><a href="https://ustraveldocs.com" target="_blank">Centro de Solicitud de Visa</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="currentYear"></span> Visa Helper - Proyecto WDD 330</p>
+        <p id="lastModified"></p>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="./src/scripts/api-service.js"></script>
+    <script src="./src/scripts/app.js"></script>
+    <script src="./src/scripts/app.js"></script>
+</body>
+</html>
